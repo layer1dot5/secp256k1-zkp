@@ -25,11 +25,6 @@ typedef struct {
     int parity_acc;
 } secp256k1_keyagg_cache_internal;
 
-/* Requires that the saved point is not infinity */
-static void secp256k1_point_save(unsigned char *data, secp256k1_ge *ge);
-
-static void secp256k1_point_load(secp256k1_ge *ge, const unsigned char *data);
-
 static int secp256k1_keyagg_cache_load(const secp256k1_context* ctx, secp256k1_keyagg_cache_internal *cache_i, const secp256k1_musig_keyagg_cache *cache);
 
 static void secp256k1_musig_keyaggcoef(secp256k1_scalar *r, const secp256k1_keyagg_cache_internal *cache_i, secp256k1_fe *x);

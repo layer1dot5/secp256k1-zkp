@@ -170,4 +170,9 @@ static void secp256k1_gej_rescale(secp256k1_gej *r, const secp256k1_fe *b);
  */
 static int secp256k1_ge_is_in_correct_subgroup(const secp256k1_ge* ge);
 
+/* Requires that the saved point is not infinity */
+static void secp256k1_point_save(unsigned char *data, secp256k1_ge *ge);
+
+static void secp256k1_point_load(secp256k1_ge *ge, const unsigned char *data);
+
 #endif /* SECP256K1_GROUP_H */

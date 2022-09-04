@@ -105,6 +105,87 @@ SECP256K1_API int secp256k1_frost_share_gen(
     const secp256k1_xonly_pubkey *pk,
     size_t threshold
 ) SECP256K1_ARG_NONNULL(1) SECP256K1_ARG_NONNULL(3) SECP256K1_ARG_NONNULL(4) SECP256K1_ARG_NONNULL(5) SECP256K1_ARG_NONNULL(6);
+
+/** Aggregates shares
+ *
+ *  As part of the key generation protocol, each participant receives a share
+ *  from each participant, including a share they "receive" from themselves.
+ *  This function verifies those shares against their VSS commitments,
+ *  aggregates the shares, and then aggregates the commitments to each
+ *  participant's first polynomial coefficient to derive the aggregate public
+ *  key.
+ *
+ *  This function outputs a vss_hash, which is a sha256 image of the VSS of all
+ *  participants. The vss_hash _must_ be signed and distributed to each other
+ *  participant, and upon receiving a signed vss_hash from each other
+ *  participant, the signature must be verified against the vss_hash generated
+ *  by the receiving participant, otherwise the key generation session must be
+ *  aborted. This vss_commitments _must_ be sorted by the x-only pubkeys of the
+ *  participants, otherwise the vss_hash generated will be invalid.
+ *
+ *  If this function returns an error, `secp256k1_frost_share_verify` can be
+ *  called on each share to determine which participants submitted faulty
+ *  shares.
+ *
+ *  Returns: 0 if the arguments are invalid, 1 otherwise (which does NOT mean
+ *           the resulting signature verifies).
+ *  Args:         ctx: pointer to a context object
+ *  Out:    agg_share: the aggregated share
+ *             agg_pk: the aggregated x-only public key
+ *           vss_hash: sha256 image of the coefficient commitments
+ *  In:        shares: all key generation shares for the partcipant's index
+ *    vss_commitments: coefficient commitments of all participants ordered by
+ *                     the x-only pubkeys of the participants
+ *           n_shares: the total number of shares
+ *          threshold: the minimum number of shares required to produce a
+ *                     signature
+ *                 pk: the public key of the participant whose shares are being
+ *                     aggregated
+ */
+SECP256K1_API int secp256k1_frost_share_agg(
+    const secp256k1_context* ctx,
+    secp256k1_frost_share *agg_share,
+    secp256k1_xonly_pubkey *agg_pk,
+    unsigned char *vss_hash,
+    const secp256k1_frost_share * const* shares,
+    const secp256k1_pubkey * const* vss_commitments,
+    size_t n_shares,
+    size_t threshold,
+    const secp256k1_xonly_pubkey *pk
+) SECP256K1_ARG_NONNULL(1) SECP256K1_ARG_NONNULL(2) SECP256K1_ARG_NONNULL(3) SECP256K1_ARG_NONNULL(4) SECP256K1_ARG_NONNULL(5) SECP256K1_ARG_NONNULL(6) SECP256K1_ARG_NONNULL(9);
+
+/** Verifies a share received during a key generation session
+ *
+ *  The signature is verified against the VSS commitment received with the
+ *  share.
+ *
+ *  Returns: 0 if the arguments are invalid or the share does not verify, 1
+ *           otherwise
+ *  Args         ctx: pointer to a context object, initialized for verification
+ *  In:    threshold: the minimum number of signers required to produce a
+ *                    signature
+ *                pk: pointer to the public key of the share recipient
+ *             share: pointer to a key generation share
+ *    vss_commitment: the commitments to the coeffcieints used to generate the
+ *                    share
+ */
+SECP256K1_API SECP256K1_WARN_UNUSED_RESULT int secp256k1_frost_share_verify(
+    const secp256k1_context* ctx,
+    size_t threshold,
+    const secp256k1_xonly_pubkey *pk,
+    const secp256k1_frost_share *share,
+    const secp256k1_pubkey * const* vss_commitment
+) SECP256K1_ARG_NONNULL(1) SECP256K1_ARG_NONNULL(3) SECP256K1_ARG_NONNULL(4) SECP256K1_ARG_NONNULL(5);
+
+SECP256K1_API int secp256k1_frost_compute_pubshare(
+    const secp256k1_context* ctx,
+    secp256k1_pubkey *pubshare,
+    size_t threshold,
+    const secp256k1_xonly_pubkey *pk,
+    const secp256k1_pubkey * const* vss_commitments,
+    size_t n_participants
+) SECP256K1_ARG_NONNULL(1) SECP256K1_ARG_NONNULL(2) SECP256K1_ARG_NONNULL(4) SECP256K1_ARG_NONNULL(5);
+
  */
 
 #ifdef __cplusplus

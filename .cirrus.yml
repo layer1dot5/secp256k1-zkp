@@ -23,6 +23,7 @@ env:
   WHITELIST: no
   MUSIG: no
   ECDSAADAPTOR: no
+  FROST: no
   ### test options
   SECP256K1_TEST_ITERS:
   BENCH: yes
@@ -72,12 +73,12 @@ task:
   << : *LINUX_CONTAINER
   matrix: &ENV_MATRIX
     - env: {WIDEMUL:  int64,  RECOVERY: yes}
-    - env: {WIDEMUL:  int64,                 ECDH: yes, SCHNORRSIG: yes, EXPERIMENTAL: yes, ECDSA_S2C: yes,  RANGEPROOF: yes, WHITELIST: yes, GENERATOR: yes, MUSIG: yes, ECDSAADAPTOR: yes}
+    - env: {WIDEMUL:  int64,                 ECDH: yes, SCHNORRSIG: yes, EXPERIMENTAL: yes, ECDSA_S2C: yes,  RANGEPROOF: yes, WHITELIST: yes, GENERATOR: yes, MUSIG: yes, ECDSAADAPTOR: yes, FROST: yes}
     - env: {WIDEMUL: int128}
     - env: {WIDEMUL: int128,  RECOVERY: yes,            SCHNORRSIG: yes}
-    - env: {WIDEMUL: int128,                 ECDH: yes, SCHNORRSIG: yes, EXPERIMENTAL: yes, ECDSA_S2C: yes, RANGEPROOF: yes, WHITELIST: yes, GENERATOR: yes, MUSIG: yes, ECDSAADAPTOR: yes}
+    - env: {WIDEMUL: int128,                 ECDH: yes, SCHNORRSIG: yes, EXPERIMENTAL: yes, ECDSA_S2C: yes, RANGEPROOF: yes, WHITELIST: yes, GENERATOR: yes, MUSIG: yes, ECDSAADAPTOR: yes, FROST: yes}
     - env: {WIDEMUL: int128,  ASM: x86_64}
-    - env: {                  RECOVERY: yes,            SCHNORRSIG: yes, EXPERIMENTAL: yes, ECDSA_S2C: yes, RANGEPROOF: yes, WHITELIST: yes, GENERATOR: yes, MUSIG: yes, ECDSAADAPTOR: yes}
+    - env: {                  RECOVERY: yes,            SCHNORRSIG: yes, EXPERIMENTAL: yes, ECDSA_S2C: yes, RANGEPROOF: yes, WHITELIST: yes, GENERATOR: yes, MUSIG: yes, ECDSAADAPTOR: yes, FROST: yes}
     - env: {BUILD: distcheck, WITH_VALGRIND: no, CTIMETEST: no, BENCH: no}
     - env: {CPPFLAGS: -DDETERMINISTIC}
     - env: {CFLAGS: -O0, CTIMETEST: no}
@@ -108,6 +109,7 @@ task:
     GENERATOR: yes
     MUSIG: yes
     ECDSAADAPTOR: yes
+    FROST: yes
   matrix:
     - env:
         CC: i686-linux-gnu-gcc
@@ -199,6 +201,7 @@ task:
     GENERATOR: yes
     MUSIG: yes
     ECDSAADAPTOR: yes
+    FROST: yes
     CTIMETEST: no
   << : *MERGE_BASE
   test_script:
@@ -293,6 +296,7 @@ task:
     GENERATOR: yes
     MUSIG: yes
     ECDSAADAPTOR: yes
+    FROST: yes
     CTIMETEST: no
   matrix:
     - name: "Valgrind (memcheck)"
